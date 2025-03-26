@@ -40,12 +40,12 @@ jobs:
               run: |
                echo "something went wrong"
 
-                if [ "${{ needs.build.result }}" == 'failure']
+                if [ "${{ needs.build.result }}" == 'failure'];
                 then
                     echo "build job has failed"
                 fi
 
-                if [ "${{ needs.deploy1.result }}" == "failure" ]
+                if [ "${{ needs.deploy1.result }}" == "failure" ];
                 then
                     echo "deploy job has failed"
                 fi
