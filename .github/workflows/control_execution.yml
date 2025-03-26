@@ -38,9 +38,9 @@ jobs:
         steps:
             - name: Output information
               run: |
-               echo "something went wrong"
+                echo "something went wrong"
 
-                if [ "${{ needs.build.result }}" == "failure"]
+                if [ "${{ needs.build.result }}" == "failure" ]
                 then
                     echo "build job has failed"
                 fi
