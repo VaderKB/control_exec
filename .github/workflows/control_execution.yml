@@ -29,4 +29,4 @@ jobs:
             - name: code checkout
               uses: actions/checkout@v4
             - name: show values
-              uses: echo "hollaaa"
+              run: echo "hollaaa"
