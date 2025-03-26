@@ -1,0 +1,57 @@
+name: caching
+on: 
+    push: 
+        branches:
+            - main
+    workflow_dispatch:
+run-name: caching dependancies
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: code checkout
+              uses: actions/checkout@v4
+            - name: list file
+              run: ls -lrt
+            - name: install dependencies
+              run: |
+                pip install --upgrade pip
+                pip install -r requirements.txt
+            - name: cache dependancies
+              uses: actions/cache@v3
+              with:
+                path: ~/.cache/pip
+                key: pip-${{ runner.os }}-${{ hashFiles('requirements.txt') }}
+                restore-keys: |
+                    pip-${{ runner.os }}-
+                    pip-
+    deploy1:
+        runs-on: ubuntu-latest
+        needs: build
+        steps:
+            - name: code checkout
+              uses: actions/checkout@v4
+            - name: restore cache
+              uses: actions/cache@v3
+              with:
+                path: ~/.cache/pip
+                key: pip-${{ runner.os }}-${{ hashFiles('requirements.txt') }}
+            - name: install dependencies
+              run: |
+                pip install --upgrade pip
+                pip install -r requirements.txt
+    deploy2:
+        runs-on: ubuntu-latest
+        needs: build
+        steps:
+            - name: code checkout
+              uses: actions/checkout@v4
+            - name: restore cache
+              uses: actions/cache@v3
+              with:
+                path: ~/.cache/pip
+                key: pip-${{ runner.os }}-${{ hashFiles('requirements.txt') }}
+            - name: install dependencies
+              run: |
+                pip install --upgrade pip
+                pip install -r requirements.txt
