@@ -69,6 +69,10 @@ jobs:
         steps:
             - name: code checkout
               uses: actions/checkout@v4
+            - name: check if pandas is there
+              run: |
+                python
+                import pandas as pd
             - name: cache values
               id: cache
               uses: actions/cache@v4
@@ -81,6 +85,10 @@ jobs:
               run: |
                 pip install --upgrade pip
                 pip install pandas
+            - name: check if pandas is there
+              run: |
+                python
+                import pandas as pd
     # Run this job only if any of the job fails defined in needs
     show-failure-job:
         if: failure()
