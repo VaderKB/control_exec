@@ -86,8 +86,7 @@ jobs:
                 pip install pandas
             - name: check if pandas is there
               run: |
-                python
-                import pandas as pd
+                pip list
     # Run this job only if any of the job fails defined in needs
     show-failure-job:
         if: failure()
