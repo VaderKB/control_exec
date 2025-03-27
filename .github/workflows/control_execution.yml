@@ -89,6 +89,7 @@ jobs:
             - build
             - deploy1
             - deploy2
+            - deploy3
         steps:
             - name: Output information
               run: |
