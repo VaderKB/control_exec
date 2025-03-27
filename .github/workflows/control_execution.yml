@@ -20,13 +20,26 @@ jobs:
                 pip install -r requirements.txt
             - name: cache dependancies
               if: failure() && steps.install-packages.outcome == 'failure'
-              run:
-                echo "running after failure from previous step"
+              uses: actions/cache@v4
+              with:
+                path: ~/.cache/pip
+                key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
     deploy1:
         runs-on: ubuntu-latest
         steps:
-            - name: show values
-              run: echo "hollaaa"
+            - name: code checkout
+              uses: actions/checkout@v4
+            - name: cache values
+              id: cache
+              uses: actions/cache@v4
+              with:
+                path: ~/.cache/pip
+                key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+            - name: install dependancies
+              if: steps.cache.outputs.cache-hit != 'true'
+              run: |
+                pip install --upgrade pip
+                pip install -r requirements.txt
 
     # Run this job only if any of the job fails defined in needs
     show-failure-job:
@@ -39,3 +52,4 @@ jobs:
             - name: Output information
               run: |
                 echo "something went wrong"
+            
