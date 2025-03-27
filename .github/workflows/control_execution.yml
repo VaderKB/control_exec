@@ -36,11 +36,30 @@ jobs:
                 path: ~/.cache/pip
                 key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
             - name: install dependancies
+              # Add a check to see if cache has been found
               if: steps.cache.outputs.cache-hit != 'true'
               run: |
                 pip install --upgrade pip
-                pip install -r requirements.txt
-
+                pip install -r numpy pandas
+    deploy2:
+        runs-on: ubuntu-latest
+        needs:
+            - deploy1
+        steps:
+            - name: code checkout
+              uses: actions/checkout@v4
+            - name: cache values
+              id: cache
+              uses: actions/cache@v4
+              with:
+                path: ~/.cache/pip
+                key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+            - name: install dependancies
+              # Add a check to see if cache has been found
+              if: steps.cache.outputs.cache-hit != 'true'
+              run: |
+                pip install --upgrade pip
+                pip install -r numpy pandas
     # Run this job only if any of the job fails defined in needs
     show-failure-job:
         if: failure()
@@ -48,6 +67,7 @@ jobs:
         needs: 
             - build
             - deploy1
+            - deploy2
         steps:
             - name: Output information
               run: |
