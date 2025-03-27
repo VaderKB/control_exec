@@ -71,8 +71,7 @@ jobs:
               uses: actions/checkout@v4
             - name: check if pandas is there
               run: |
-                python
-                import pandas as pd
+                pip list
             - name: cache values
               id: cache
               uses: actions/cache@v4
