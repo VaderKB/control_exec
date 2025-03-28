@@ -8,16 +8,16 @@ jobs:
     build:
         runs-on: ubuntu-latest
         steps:
-        - name: prepare cache content
-          run: |
-            mkdir cachedir
-            cd cachedir
-            echo "hello there" >> file.txt
         - name: cache data
           uses: actions/cache@v4
           with:
             path: cachedir
             key: cachefile
+        - name: prepare cache content
+          run: |
+            mkdir cachedir
+            cd cachedir
+            echo "hello there" >> file.txt
     deploy:
         runs-on: ubuntu-latest
         needs: build
