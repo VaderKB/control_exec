@@ -1,0 +1,99 @@
+name: caching
+on: 
+    push: 
+        branches:
+            - main
+    workflow_dispatch:
+run-name: continue on error
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: code checkout
+              uses: actions/checkout@v4
+            - name: list file
+              run: ls -lrt
+            - name: install dependencies
+              continue-on-error: true
+              run: |
+                pip install --upgrade pip
+                pip install -r requirements.txt
+
+    deploy1:
+        runs-on: ubuntu-latest
+        steps:
+            - name: code checkout
+              uses: actions/checkout@v4
+            - name: cache values
+              id: cache
+              uses: actions/cache@v4
+              with:
+                path: ~/.cache/pip
+                key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+            - name: install dependancies
+              # Add a check to see if cache has been found
+              if: steps.cache.outputs.cache-hit != 'true'
+              run: |
+                pip install --upgrade pip
+                pip install -r numpy pandas
+    deploy2:
+        runs-on: ubuntu-latest
+        needs:
+            - deploy1
+        if: always() # Run this job always no matter what
+        steps:
+            - name: code checkout
+              uses: actions/checkout@v4
+            - name: install dependancies
+              run: |
+                pip install --upgrade pip
+                pip install pandas
+            - name: check if pandas is there
+              run: |
+                pip list
+            - name: cache values
+              id: cache
+              uses: actions/cache@v4
+              with:
+                path: ~/.cache/pip
+                key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+    deploy3: # This job will only run if previous job is successful
+        runs-on: ubuntu-latest
+        needs:
+            - deploy2
+        if: always()
+        steps:
+            - name: code checkout
+              uses: actions/checkout@v4
+            - name: check if pandas is there
+              run: |
+                pip list
+            - name: cache values
+              id: cache
+              uses: actions/cache@v4
+              with:
+                path: ~/.cache/pip
+                key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+            - name: install dependancies
+              # Add a check to see if cache has been found
+              if: steps.cache.outputs.cache-hit != 'true'
+              run: |
+                pip install --upgrade pip
+                pip install pandas
+            - name: check if pandas is there
+              run: |
+                pip list
+    # Run this job only if any of the job fails defined in needs
+    show-failure-job:
+        if: failure()
+        runs-on: ubuntu-latest
+        needs: 
+            - build
+            - deploy1
+            - deploy2
+            - deploy3
+        steps:
+            - name: Output information
+              run: |
+                echo "something went wrong"
+            
