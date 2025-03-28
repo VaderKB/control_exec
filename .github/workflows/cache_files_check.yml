@@ -4,7 +4,7 @@ on:
         branches:
             - main
     workflow_dispatch:
-run-name: control execution flow
+run-name: check cache
 jobs:
     build:
         runs-on: ubuntu-latest
@@ -20,17 +20,17 @@ jobs:
                 path: cachedir
                 key: cachefile
     deploy:
-      runs-on: ubuntu-latest
-      needs: build
-      steps:
-            - name: cache data
-             uses: actions/cache@v4
-              with:
-                path: cachedir
-                key: cachefile
-            - name: check data
-              run: |
-                ls -lrt
-                cd cachedir
-                ls -lrt
-            
+        runs-on: ubuntu-latest
+        needs: build
+        steps:
+              - name: cache data
+              uses: actions/cache@v4
+                with:
+                  path: cachedir
+                  key: cachefile
+              - name: check data
+                run: |
+                  ls -lrt
+                  cd cachedir
+                  ls -lrt
+              
